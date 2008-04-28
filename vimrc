@@ -318,6 +318,7 @@ function Textobj(char, callback)
     exe 'xnoremap <silent>i'.a:char.' <Esc>:call Textobj_'.g:text_object_number.'(1, "v", v:prevcount, '.cbname.')<CR>'
 endfunction
 " }}}
+" Text objects {{{
 " / for regex {{{
 function Textobj_regex(inner, count)
     let pos = getpos('.')
@@ -380,6 +381,7 @@ function Textobj_fold(inner, count)
     return [startline, 1, endline, strlen(getline(endline))]
 endfunction
 call Textobj('f', 'Textobj_fold')
+" }}}
 " }}}
 " }}}
 
