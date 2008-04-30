@@ -319,7 +319,7 @@ function Textobj(char, callback)
             normal! l
             startinsert
         elseif a:operator == 'v'
-            normal! h
+            exe "normal! \<BS>"
         endif
     endfunction
 
