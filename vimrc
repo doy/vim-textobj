@@ -280,9 +280,11 @@ if file_readable(s:session_file) && expand("%:.") !~ '^/'
 endif
 " }}}
 " Textobj {{{
-call Textobj('/', "Textobj_paired", '/')
-call Textobj('f', "Textobj_fold")
-call Textobj(',', "Textobj_arg")
+let g:Textobj_defs = [
+   \['/', 'Textobj_paired', '/'],
+   \['f', 'Textobj_fold'],
+   \[',', 'Textobj_arg'],
+\]
 " }}}
 " }}}
 
