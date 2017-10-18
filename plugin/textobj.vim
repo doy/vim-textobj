@@ -1,3 +1,7 @@
+if exists('g:loaded_textobj')
+    finish
+endif
+let g:loaded_textobj = 1
 " Text object creation {{{
 " XXX: use virtualedit here, it should greatly simplify things
 let s:text_object_number = 0
