@@ -5,7 +5,7 @@ let g:loaded_textobj = 1
 
 " XXX: use virtualedit here, it should greatly simplify things
 let s:text_object_number = 0
-function s:textobj(char, callback, ...)
+function! s:textobj(char, callback, ...)
     let s:text_object_number += 1
     function s:textobj_{s:text_object_number}(inner, operator, count, callback, ...)
         try
@@ -61,7 +61,7 @@ function s:textobj(char, callback, ...)
 endfunction
 
 " arbitrary paired symbols (/ for regex, etc)
-function s:textobj_paired(inner, count, ...)
+function! s:textobj_paired(inner, count, ...)
     let char = a:1
     let pos = getpos('.')
 
@@ -119,7 +119,7 @@ function s:textobj_paired(inner, count, ...)
 endfunction
 
 " folds
-function s:textobj_fold(inner, count, ...)
+function! s:textobj_fold(inner, count, ...)
     if foldlevel(line('.')) == 0
         throw 'no-match'
     endif
@@ -132,7 +132,7 @@ function s:textobj_fold(inner, count, ...)
 endfunction
 
 " function arguments
-function s:textobj_arg(inner, count, ...)
+function! s:textobj_arg(inner, count, ...)
     let pos = getpos('.')
     let curchar = getline(pos[1])[pos[2] - 1]
     if curchar == ','
@@ -234,7 +234,7 @@ function s:textobj_arg(inner, count, ...)
     return [argstartline, argbegin, argendline, argend]
 endfunction
 
-function s:load_textobjs(defs)
+function! s:load_textobjs(defs)
     for l:char in keys(g:textobj_defs)
         let l:extra_args = g:textobj_defs[l:char]
         let l:callback = remove(l:extra_args, 0)
