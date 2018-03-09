@@ -2,7 +2,7 @@ if exists('g:loaded_textobj')
     finish
 endif
 let g:loaded_textobj = 1
-" Text object creation {{{
+
 " XXX: use virtualedit here, it should greatly simplify things
 let s:text_object_number = 0
 function Textobj(char, callback, ...)
@@ -59,9 +59,8 @@ function Textobj(char, callback, ...)
     exe 'xnoremap <silent>a'.a:char.' <Esc>:call call("<SID>textobj_'.s:text_object_number.'", [0, "v", v:prevcount, "'.a:callback.'"] + '.string(a:000).')<CR>'
     exe 'xnoremap <silent>i'.a:char.' <Esc>:call call("<SID>textobj_'.s:text_object_number.'", [1, "v", v:prevcount, "'.a:callback.'"] + '.string(a:000).')<CR>'
 endfunction
-" }}}
-" Text object definitions {{{
-" arbitrary paired symbols (/ for regex, etc) {{{
+
+" arbitrary paired symbols (/ for regex, etc)
 function Textobj_paired(inner, count, ...)
     let char = a:1
     let pos = getpos('.')
@@ -118,8 +117,8 @@ function Textobj_paired(inner, count, ...)
 
     return [objstartline, objstart, objendline, objend]
 endfunction
-" }}}
-" f for folds {{{
+
+" folds
 function Textobj_fold(inner, count, ...)
     if foldlevel(line('.')) == 0
         throw 'no-match'
@@ -131,8 +130,8 @@ function Textobj_fold(inner, count, ...)
 
     return [startline, 1, endline, strlen(getline(endline))]
 endfunction
-" }}}
-" , for function arguments {{{
+
+" function arguments
 function Textobj_arg(inner, count, ...)
     let pos = getpos('.')
     let curchar = getline(pos[1])[pos[2] - 1]
@@ -234,9 +233,7 @@ function Textobj_arg(inner, count, ...)
 
     return [argstartline, argbegin, argendline, argend]
 endfunction
-" }}}
-" }}}
-" Text object loading {{{
+
 function s:load_textobjs(defs)
     for l:char in keys(g:textobj_defs)
         let l:extra_args = g:textobj_defs[l:char]
@@ -249,7 +246,7 @@ function s:load_textobjs(defs)
         call call('Textobj', l:args)
     endfor
 endfunction
+
 if exists('g:textobj_defs')
     call s:load_textobjs(g:textobj_defs)
 endif
-" }}}
