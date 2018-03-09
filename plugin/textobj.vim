@@ -62,14 +62,15 @@ endfunction
 " }}}
 " Text object definitions {{{
 " arbitrary paired symbols (/ for regex, etc) {{{
-function Textobj_paired(inner, count, char)
+function Textobj_paired(inner, count, ...)
+    let char = a:1
     let pos = getpos('.')
 
     let line = strpart(getline(pos[1]), 0, pos[2])
     let lines = getline(1, pos[1] - 1) + [line]
     let linenum = pos[1]
     for line in reverse(lines)
-        let objstart = match(line, '.*\zs\\\@<!'.a:char) + 1
+        let objstart = match(line, '.*\zs\\\@<!'.char) + 1
         if objstart != 0
             break
         endif
@@ -85,14 +86,14 @@ function Textobj_paired(inner, count, char)
     let lines = [line] + getline(pos[1] + 1, line('$'))
     let linenum = pos[1]
     for line in lines
-        let objend = match(line, '\\\@<!'.a:char) + 1
+        let objend = match(line, '\\\@<!'.char) + 1
         if objend != 0
             if linenum == pos[1]
                 " have to account for the possibility of a split escape
                 " sequence
                 if objend == 1
                     if getline(pos[1])[pos[2] - 2] == '\'
-                        let objend = match(line, '\\\@<!'.a:char, 1) + 1
+                        let objend = match(line, '\\\@<!'.char, 1) + 1
                         if objend == 0
                             let linenum += 1
                             continue
@@ -119,7 +120,7 @@ function Textobj_paired(inner, count, char)
 endfunction
 " }}}
 " f for folds {{{
-function Textobj_fold(inner, count)
+function Textobj_fold(inner, count, ...)
     if foldlevel(line('.')) == 0
         throw 'no-match'
     endif
@@ -132,7 +133,7 @@ function Textobj_fold(inner, count)
 endfunction
 " }}}
 " , for function arguments {{{
-function Textobj_arg(inner, count)
+function Textobj_arg(inner, count, ...)
     let pos = getpos('.')
     let curchar = getline(pos[1])[pos[2] - 1]
     if curchar == ','
@@ -236,8 +237,19 @@ endfunction
 " }}}
 " }}}
 " Text object loading {{{
-for object in g:Textobj_defs
-    call call('Textobj', object)
-endfor
-unlet object
+function s:load_textobjs(defs)
+    for l:char in keys(g:textobj_defs)
+        let l:extra_args = g:textobj_defs[l:char]
+        let l:callback = remove(l:extra_args, 0)
+        if len(l:extra_args) == 0
+            call add(l:extra_args, l:char)
+        endif
+        let l:args = [l:char, 'Textobj_'.l:callback]
+        call extend(l:args, l:extra_args)
+        call call('Textobj', l:args)
+    endfor
+endfunction
+if exists('g:textobj_defs')
+    call s:load_textobjs(g:textobj_defs)
+endif
 " }}}
