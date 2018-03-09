@@ -5,7 +5,7 @@ let g:loaded_textobj = 1
 
 " XXX: use virtualedit here, it should greatly simplify things
 let s:text_object_number = 0
-function Textobj(char, callback, ...)
+function s:textobj(char, callback, ...)
     let s:text_object_number += 1
     function s:textobj_{s:text_object_number}(inner, operator, count, callback, ...)
         try
@@ -61,7 +61,7 @@ function Textobj(char, callback, ...)
 endfunction
 
 " arbitrary paired symbols (/ for regex, etc)
-function Textobj_paired(inner, count, ...)
+function s:textobj_paired(inner, count, ...)
     let char = a:1
     let pos = getpos('.')
 
@@ -119,7 +119,7 @@ function Textobj_paired(inner, count, ...)
 endfunction
 
 " folds
-function Textobj_fold(inner, count, ...)
+function s:textobj_fold(inner, count, ...)
     if foldlevel(line('.')) == 0
         throw 'no-match'
     endif
@@ -132,7 +132,7 @@ function Textobj_fold(inner, count, ...)
 endfunction
 
 " function arguments
-function Textobj_arg(inner, count, ...)
+function s:textobj_arg(inner, count, ...)
     let pos = getpos('.')
     let curchar = getline(pos[1])[pos[2] - 1]
     if curchar == ','
@@ -241,9 +241,9 @@ function s:load_textobjs(defs)
         if len(l:extra_args) == 0
             call add(l:extra_args, l:char)
         endif
-        let l:args = [l:char, 'Textobj_'.l:callback]
+        let l:args = [l:char, "<SID>textobj_".l:callback]
         call extend(l:args, l:extra_args)
-        call call('Textobj', l:args)
+        call call("<SID>textobj", l:args)
     endfor
 endfunction
 
